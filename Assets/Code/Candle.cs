@@ -1,4 +1,5 @@
 using UnityEngine;
+using DG.Tweening;
 
 public class Candle : MonoBehaviour, IButtonListener
 {
@@ -30,6 +31,11 @@ public class Candle : MonoBehaviour, IButtonListener
         _candleRenderer = GetComponent<SpriteRenderer>();
 
         Setup();
+
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(transform.DOMoveY(transform.position.y - 0.15f, 3.72f));
+        sequence.Append(transform.DOMoveY(transform.position.y, 4.35f));
+        sequence.SetLoops(-1, LoopType.Yoyo);
     }
 
     public void Setup()
