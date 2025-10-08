@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using System.Collections;
 
-public class Candle : MonoBehaviour, IButtonListener
+public class Candle : Singleton<Candle>, IButtonListener
 {
     // Variables
     private ButtonInfo _currentButton;
@@ -20,6 +20,8 @@ public class Candle : MonoBehaviour, IButtonListener
     [SerializeField] private float vignetteBurnIntensity = 0.43f;
     private Vignette _vignette;
 
+    [SerializeField] private float endSpeed = 1.0f;
+
     [SerializeField] private SpriteRenderer blackScreen;
 
     private SpriteRenderer _candleRenderer;
@@ -27,8 +29,10 @@ public class Candle : MonoBehaviour, IButtonListener
 
     private Vector3 _flameScaleMin = new Vector3(0.15f, 0.15f, 0.15f);
     private Vector3 _flameScaleMax = new Vector3(0.3f, 0.3f, 0.3f);
-    private bool _isBurning;
+    public bool IsBurning { get; private set; }
     private bool _wasBurning;
+
+    private bool _isDead;
 
     private float _currentLifetime;
     private float _quarterOfTotalLifetime;
@@ -60,13 +64,17 @@ public class Candle : MonoBehaviour, IButtonListener
         _currentLifetime = totalLifetime;
         _quarterOfTotalLifetime = totalLifetime / 4.0f;
 
+        IsBurning = false;
+        _isDead = false;
 
         globalVolume.profile.TryGet(out _vignette);
     }
 
     private void Update()
     {
-        if (_isBurning && !_wasBurning)
+        if (_isDead) return;
+
+        if (IsBurning && !_wasBurning)
         {
             _wasBurning = true;
             AudioManager.Instance.PlaySound(flameWhoosh);
@@ -74,7 +82,7 @@ public class Candle : MonoBehaviour, IButtonListener
 
         if (_currentButton.CurrentState == ButtonState.Held)
         {
-            _isBurning = true;
+            IsBurning = true;
 
             _currentLifetime -= Time.deltaTime * burnSpeed;
 
@@ -84,7 +92,7 @@ public class Candle : MonoBehaviour, IButtonListener
         }
         else
         {
-            _isBurning = false;
+            IsBurning = false;
             _wasBurning = false;
 
             _currentLifetime -= Time.deltaTime;
@@ -107,7 +115,7 @@ public class Candle : MonoBehaviour, IButtonListener
         {
             _candleRenderer.sprite = sprites[3];
 
-            if (_isBurning)
+            if (IsBurning)
                 flameTransform.localPosition = new Vector3(-0.117f, 1.21f, 0.0f);
             else
                 flameTransform.localPosition = new Vector3(-0.117f, 1.0f, 0.0f);
@@ -116,7 +124,7 @@ public class Candle : MonoBehaviour, IButtonListener
         {
             _candleRenderer.sprite = sprites[2];
 
-            if (_isBurning)
+            if (IsBurning)
                 flameTransform.localPosition = new Vector3(-0.135f, 1.694f, 0.0f);
             else
                 flameTransform.localPosition = new Vector3(-0.125f, 1.471f, 0.0f);
@@ -125,14 +133,14 @@ public class Candle : MonoBehaviour, IButtonListener
         {
             _candleRenderer.sprite = sprites[1];
 
-            if (_isBurning)
+            if (IsBurning)
                 flameTransform.localPosition = new Vector3(-0.156f, 2.289f, 0.0f);
             else
                 flameTransform.localPosition = new Vector3(-0.136f, 2.043f, 0.0f);
         }
         else
         {
-            if (_isBurning)
+            if (IsBurning)
                 flameTransform.localPosition = new Vector3(-0.165f, 2.747f, 0.0f);
             else
                 flameTransform.localPosition = new Vector3(-0.165f, 2.483f, 0.0f);
@@ -141,17 +149,34 @@ public class Candle : MonoBehaviour, IButtonListener
 
     private IEnumerator EndScene()
     {
+        _isDead = true;
+        Vector2 center;
+
+        Color color = new Color(0, 0, 0, 0);
+
         while (_vignette.intensity.value < 1.0f)
         {
-            _vignette.intensity.value += 0.001f;
+            _vignette.intensity.value += 0.005f * endSpeed;
+
+            center = _vignette.center.value;
+            center.y -= 0.0013f * endSpeed;
+            _vignette.center.value = center;
+
+            color.a += 0.007f * endSpeed;
+            blackScreen.color = color;
+
+            yield return new WaitForSeconds(0.025f);
         }
 
 
-        yield return new WaitForSeconds(3.0f);
+        yield return new WaitForSeconds(1.0f);
 
-        Color color = new Color(0, 0, 0, 255);
+        color.a = 255f;
         blackScreen.color = color;
         gameObject.SetActive(false);
+
+        yield return new WaitForSeconds(3.0f);
+        GameManager.Instance.ShowMainMenu();
     }
 
     public void ButtonHeld(ButtonInfo heldInfo)
