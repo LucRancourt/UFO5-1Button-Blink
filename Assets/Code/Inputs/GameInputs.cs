@@ -67,10 +67,19 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
             ""id"": ""7936e43e-d9b2-41b3-99ed-f7a09be4afbf"",
             ""actions"": [
                 {
-                    ""name"": ""New action"",
-                    ""type"": ""Button"",
+                    ""name"": ""Navigate"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""41d86f22-1bed-49ea-a59d-b19bb0d557f5"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Submit"",
+                    ""type"": ""Button"",
+                    ""id"": ""8b36b028-505b-480a-bf57-8bff301ff453"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -78,13 +87,68 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
             ],
             ""bindings"": [
                 {
-                    ""name"": """",
-                    ""id"": ""060b512d-933b-4972-9e32-77616f6dc258"",
+                    ""name"": ""Keyboard"",
+                    ""id"": ""47f9d625-b777-46db-830b-a2e82e436063"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": ""Hold"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""d5d429be-2b17-463b-b46a-9e05f5d35398"",
                     ""path"": """",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""New action"",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""189b917c-ac77-405d-a81c-1f1aa37a4540"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Mouse and Key"",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""faa93422-1aef-46ea-8a4e-5b28854ec862"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""dcb18e0f-2710-486f-bdc1-4660668eeb15"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""08b324c4-0f92-4cd9-8877-e340385dbeaf"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": ""Tap"",
+                    ""processors"": """",
+                    ""groups"": "";Mouse and Key"",
+                    ""action"": ""Submit"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -126,7 +190,8 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
         m_PlayerControl_Interact = m_PlayerControl.FindAction("Interact", throwIfNotFound: true);
         // MenuControl
         m_MenuControl = asset.FindActionMap("MenuControl", throwIfNotFound: true);
-        m_MenuControl_Newaction = m_MenuControl.FindAction("New action", throwIfNotFound: true);
+        m_MenuControl_Navigate = m_MenuControl.FindAction("Navigate", throwIfNotFound: true);
+        m_MenuControl_Submit = m_MenuControl.FindAction("Submit", throwIfNotFound: true);
     }
 
     ~@GameInputs()
@@ -240,12 +305,14 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
     // MenuControl
     private readonly InputActionMap m_MenuControl;
     private List<IMenuControlActions> m_MenuControlActionsCallbackInterfaces = new List<IMenuControlActions>();
-    private readonly InputAction m_MenuControl_Newaction;
+    private readonly InputAction m_MenuControl_Navigate;
+    private readonly InputAction m_MenuControl_Submit;
     public struct MenuControlActions
     {
         private @GameInputs m_Wrapper;
         public MenuControlActions(@GameInputs wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Newaction => m_Wrapper.m_MenuControl_Newaction;
+        public InputAction @Navigate => m_Wrapper.m_MenuControl_Navigate;
+        public InputAction @Submit => m_Wrapper.m_MenuControl_Submit;
         public InputActionMap Get() { return m_Wrapper.m_MenuControl; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -255,16 +322,22 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_MenuControlActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_MenuControlActionsCallbackInterfaces.Add(instance);
-            @Newaction.started += instance.OnNewaction;
-            @Newaction.performed += instance.OnNewaction;
-            @Newaction.canceled += instance.OnNewaction;
+            @Navigate.started += instance.OnNavigate;
+            @Navigate.performed += instance.OnNavigate;
+            @Navigate.canceled += instance.OnNavigate;
+            @Submit.started += instance.OnSubmit;
+            @Submit.performed += instance.OnSubmit;
+            @Submit.canceled += instance.OnSubmit;
         }
 
         private void UnregisterCallbacks(IMenuControlActions instance)
         {
-            @Newaction.started -= instance.OnNewaction;
-            @Newaction.performed -= instance.OnNewaction;
-            @Newaction.canceled -= instance.OnNewaction;
+            @Navigate.started -= instance.OnNavigate;
+            @Navigate.performed -= instance.OnNavigate;
+            @Navigate.canceled -= instance.OnNavigate;
+            @Submit.started -= instance.OnSubmit;
+            @Submit.performed -= instance.OnSubmit;
+            @Submit.canceled -= instance.OnSubmit;
         }
 
         public void RemoveCallbacks(IMenuControlActions instance)
@@ -306,6 +379,7 @@ public partial class @GameInputs: IInputActionCollection2, IDisposable
     }
     public interface IMenuControlActions
     {
-        void OnNewaction(InputAction.CallbackContext context);
+        void OnNavigate(InputAction.CallbackContext context);
+        void OnSubmit(InputAction.CallbackContext context);
     }
 }

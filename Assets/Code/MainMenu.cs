@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MainMenu : Singleton<MainMenu>
+public class MainMenu : Singleton<MainMenu>//, IButtonListener
 {
     // Variables
     [SerializeField] private SFX clickSFX;
@@ -62,5 +62,22 @@ public class MainMenu : Singleton<MainMenu>
     private void PlayClickSFX()
     {
         AudioManager.Instance.PlaySound(clickSFX);
+    }
+
+
+
+    public void ButtonHeld(ButtonInfo heldInfo)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void ButtonPressed(ButtonInfo pressedInfo)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void ButtonReleased(ButtonInfo releasedInfo)
+    {
+        throw new System.NotImplementedException();
     }
 }
