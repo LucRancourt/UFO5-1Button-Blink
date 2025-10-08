@@ -11,19 +11,27 @@ public class Candle : Singleton<Candle>, IButtonListener
 
     [Tooltip("Must have exactly 5 Sprites - Start Sprite to End Sprite in order")]
     [SerializeField] private Sprite[] sprites;
+
+    [Header("Lifetime")]
     [SerializeField] private float totalLifetime;
     [SerializeField] private float burnSpeed = 4.0f;
     [SerializeField] private SFX flameWhoosh;
 
+    private float _currentLifetime;
+    private float _quarterOfTotalLifetime;
+
+    [Header("Vignette")]
     [SerializeField] private Volume globalVolume;
     [SerializeField] private float vignetteLowLightIntensity = 0.57f;
     [SerializeField] private float vignetteBurnIntensity = 0.43f;
     private Vignette _vignette;
 
+    [Header("EndingExtras")]
     [SerializeField] private float endSpeed = 1.0f;
-
     [SerializeField] private SpriteRenderer blackScreen;
 
+    [Header("ObjectExtras")]
+    [SerializeField] private GameObject candle;
     private SpriteRenderer _candleRenderer;
     [SerializeField] private Transform flameTransform;
 
@@ -32,10 +40,7 @@ public class Candle : Singleton<Candle>, IButtonListener
     public bool IsBurning { get; private set; }
     private bool _wasBurning;
 
-    private bool _isDead;
-
-    private float _currentLifetime;
-    private float _quarterOfTotalLifetime;
+    private bool _isDead = true;
 
 
     // Functions
@@ -45,9 +50,7 @@ public class Candle : Singleton<Candle>, IButtonListener
         var inputObject = FindFirstObjectByType<PlayerInputs>();
         inputObject.RegisterListener(this);
 
-        _candleRenderer = GetComponent<SpriteRenderer>();
-
-        Setup();
+        _candleRenderer = candle.GetComponent<SpriteRenderer>();
 
         Sequence sequence = DOTween.Sequence();
         sequence.Append(transform.DOMoveY(transform.position.y - 0.15f, 3.72f));
@@ -59,6 +62,7 @@ public class Candle : Singleton<Candle>, IButtonListener
     {
         _candleRenderer.sprite = sprites[0];
 
+        candle.SetActive(true);
         flameTransform.gameObject.SetActive(true);
 
         _currentLifetime = totalLifetime;
@@ -68,6 +72,12 @@ public class Candle : Singleton<Candle>, IButtonListener
         _isDead = false;
 
         globalVolume.profile.TryGet(out _vignette);
+
+        Color color = new Color(0, 0, 0, 0);
+        blackScreen.color = color;
+
+        _vignette.intensity.value = vignetteLowLightIntensity;
+        _vignette.center.value = new Vector2(0.5f, 0.5f);
     }
 
     private void Update()
@@ -173,10 +183,10 @@ public class Candle : Singleton<Candle>, IButtonListener
 
         color.a = 255f;
         blackScreen.color = color;
-        gameObject.SetActive(false);
+        candle.SetActive(false);
 
         yield return new WaitForSeconds(3.0f);
-        GameManager.Instance.ShowMainMenu();
+        MainMenu.Instance.ShowMainMenu();
     }
 
     public void ButtonHeld(ButtonInfo heldInfo)
