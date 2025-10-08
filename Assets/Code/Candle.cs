@@ -56,20 +56,23 @@ public class Candle : Singleton<Candle>, IButtonListener
         sequence.Append(transform.DOMoveY(transform.position.y - 0.15f, 3.72f));
         sequence.Append(transform.DOMoveY(transform.position.y, 4.35f));
         sequence.SetLoops(-1, LoopType.Yoyo);
+
+        Setup();
     }
 
-    public void Setup()
+    private void Setup()
     {
         _candleRenderer.sprite = sprites[0];
 
         candle.SetActive(true);
         flameTransform.gameObject.SetActive(true);
+        flameTransform.localScale = _flameScaleMin;
+        flameTransform.localPosition = new Vector3(-0.165f, 2.483f, 0.0f);
 
         _currentLifetime = totalLifetime;
         _quarterOfTotalLifetime = totalLifetime / 4.0f;
 
         IsBurning = false;
-        _isDead = false;
 
         globalVolume.profile.TryGet(out _vignette);
 
@@ -78,6 +81,13 @@ public class Candle : Singleton<Candle>, IButtonListener
 
         _vignette.intensity.value = vignetteLowLightIntensity;
         _vignette.center.value = new Vector2(0.5f, 0.5f);
+    }
+
+    public void Activate()
+    {
+        Setup();
+
+        _isDead = false;
     }
 
     private void Update()
@@ -186,7 +196,8 @@ public class Candle : Singleton<Candle>, IButtonListener
         candle.SetActive(false);
 
         yield return new WaitForSeconds(3.0f);
-        MainMenu.Instance.ShowMainMenu();
+        GameManager.Instance.EndGame();
+        Setup();
     }
 
     public void ButtonHeld(ButtonInfo heldInfo)
