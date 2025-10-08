@@ -1,5 +1,8 @@
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+using System.Collections;
 
 public class Candle : MonoBehaviour, IButtonListener
 {
@@ -10,12 +13,22 @@ public class Candle : MonoBehaviour, IButtonListener
     [SerializeField] private Sprite[] sprites;
     [SerializeField] private float totalLifetime;
     [SerializeField] private float burnSpeed = 4.0f;
+    [SerializeField] private SFX flameWhoosh;
+
+    [SerializeField] private Volume globalVolume;
+    [SerializeField] private float vignetteLowLightIntensity = 0.57f;
+    [SerializeField] private float vignetteBurnIntensity = 0.43f;
+    private Vignette _vignette;
+
+    [SerializeField] private SpriteRenderer blackScreen;
 
     private SpriteRenderer _candleRenderer;
     [SerializeField] private Transform flameTransform;
 
     private Vector3 _flameScaleMin = new Vector3(0.15f, 0.15f, 0.15f);
     private Vector3 _flameScaleMax = new Vector3(0.3f, 0.3f, 0.3f);
+    private bool _isBurning;
+    private bool _wasBurning;
 
     private float _currentLifetime;
     private float _quarterOfTotalLifetime;
@@ -42,47 +55,103 @@ public class Candle : MonoBehaviour, IButtonListener
     {
         _candleRenderer.sprite = sprites[0];
 
-        flameTransform.localPosition = new Vector3(-0.165f, 2.483f, 0.0f);
         flameTransform.gameObject.SetActive(true);
 
         _currentLifetime = totalLifetime;
         _quarterOfTotalLifetime = totalLifetime / 4.0f;
+
+
+        globalVolume.profile.TryGet(out _vignette);
     }
 
     private void Update()
     {
+        if (_isBurning && !_wasBurning)
+        {
+            _wasBurning = true;
+            AudioManager.Instance.PlaySound(flameWhoosh);
+        }
+
         if (_currentButton.CurrentState == ButtonState.Held)
         {
+            _isBurning = true;
+
             _currentLifetime -= Time.deltaTime * burnSpeed;
 
             flameTransform.localScale = _flameScaleMax;
 
-            if (_currentLifetime <= 0.0f)
-            {
-                _candleRenderer.sprite = sprites[4];
-                flameTransform.gameObject.SetActive(false);
-            }
-            else if (_currentLifetime <= _quarterOfTotalLifetime)
-            {
-                _candleRenderer.sprite = sprites[3];
-                flameTransform.localPosition = new Vector3(-0.117f, 1.0f, 0.0f);
-            }
-            else if (_currentLifetime <= _quarterOfTotalLifetime * 2.0f)
-            {
-                _candleRenderer.sprite = sprites[2];
-                flameTransform.localPosition = new Vector3(-0.125f, 1.471f, 0.0f);
-            }
-            else if (_currentLifetime <= _quarterOfTotalLifetime * 3.0f)
-            {
-                _candleRenderer.sprite = sprites[1];
-                flameTransform.localPosition = new Vector3(-0.136f, 2.043f, 0.0f);
-            }
+            _vignette.intensity.value = vignetteBurnIntensity;
         }
         else
         {
+            _isBurning = false;
+            _wasBurning = false;
+
             _currentLifetime -= Time.deltaTime;
+
             flameTransform.localScale = _flameScaleMin;
+
+            _vignette.intensity.value = vignetteLowLightIntensity;
         }
+
+
+
+        if (_currentLifetime <= 0.0f)
+        {
+            _candleRenderer.sprite = sprites[4];
+            flameTransform.gameObject.SetActive(false);
+
+            StartCoroutine(EndScene());
+        }
+        else if (_currentLifetime <= _quarterOfTotalLifetime)
+        {
+            _candleRenderer.sprite = sprites[3];
+
+            if (_isBurning)
+                flameTransform.localPosition = new Vector3(-0.117f, 1.21f, 0.0f);
+            else
+                flameTransform.localPosition = new Vector3(-0.117f, 1.0f, 0.0f);
+        }
+        else if (_currentLifetime <= _quarterOfTotalLifetime * 2.0f)
+        {
+            _candleRenderer.sprite = sprites[2];
+
+            if (_isBurning)
+                flameTransform.localPosition = new Vector3(-0.135f, 1.694f, 0.0f);
+            else
+                flameTransform.localPosition = new Vector3(-0.125f, 1.471f, 0.0f);
+        }
+        else if (_currentLifetime <= _quarterOfTotalLifetime * 3.0f)
+        {
+            _candleRenderer.sprite = sprites[1];
+
+            if (_isBurning)
+                flameTransform.localPosition = new Vector3(-0.156f, 2.289f, 0.0f);
+            else
+                flameTransform.localPosition = new Vector3(-0.136f, 2.043f, 0.0f);
+        }
+        else
+        {
+            if (_isBurning)
+                flameTransform.localPosition = new Vector3(-0.165f, 2.747f, 0.0f);
+            else
+                flameTransform.localPosition = new Vector3(-0.165f, 2.483f, 0.0f);
+        }
+    }
+
+    private IEnumerator EndScene()
+    {
+        while (_vignette.intensity.value < 1.0f)
+        {
+            _vignette.intensity.value += 0.001f;
+        }
+
+
+        yield return new WaitForSeconds(3.0f);
+
+        Color color = new Color(0, 0, 0, 255);
+        blackScreen.color = color;
+        gameObject.SetActive(false);
     }
 
     public void ButtonHeld(ButtonInfo heldInfo)
