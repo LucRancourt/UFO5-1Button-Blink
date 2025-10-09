@@ -13,7 +13,9 @@ public class Candle : Singleton<Candle>, IButtonListener
     [SerializeField] private Sprite[] sprites;
 
     [Header("Lifetime")]
+    [Tooltip("Seconds the candle will last if no button is pressed")]
     [SerializeField] private float totalLifetime;
+    [Tooltip("Burns x seconds every 1 second button is pressed/held")]
     [SerializeField] private float burnSpeed = 4.0f;
     [SerializeField] private SFX flameWhoosh;
 
