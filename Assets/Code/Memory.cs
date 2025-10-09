@@ -1,12 +1,16 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using TMPro;
 
 [RequireComponent(typeof(SpriteRenderer))]
 
 public class Memory : MonoBehaviour, IButtonListener
 {
     // Variables
+    [SerializeField] private string achievementKey;
+    [SerializeField] private GameObject achievementPopup;
+
     public event Action OnMemoryFadedOut;
 
     [SerializeField] private GameObject fullsizeBackground;
@@ -126,8 +130,23 @@ public class Memory : MonoBehaviour, IButtonListener
         Candle.Instance.AddTime(5.0f);
 
         fullsizeBackground.gameObject.SetActive(true);
-
+        Invoke("SaveAchievement", 2.5f);
         Invoke("SetBackgroundInactive", 5.0f);
+    }
+
+    private void SaveAchievement()
+    {
+        PlayerPrefs.SetInt(achievementKey, 1);
+
+        achievementPopup.GetComponent<TextMeshProUGUI>().SetText(achievementKey + " experienced!");
+        achievementPopup.SetActive(true);
+
+        Invoke("SetPopupInactive", 3.0f);
+    }
+
+    private void SetPopupInactive()
+    {
+        achievementPopup.SetActive(false);
     }
 
     private void SetBackgroundInactive()
@@ -183,6 +202,10 @@ public class Memory : MonoBehaviour, IButtonListener
 
     public void TurnOffMemory()
     {
+        StopAllCoroutines();
+        CancelInvoke();
+
+        achievementPopup.SetActive(false);
         fullsizeBackground.gameObject.SetActive(false);
         _isActive = false;
         gameObject.SetActive(false);

@@ -26,10 +26,6 @@ public class SettingsMenu : Singleton<SettingsMenu>, IButtonListener
     private float _currentMasterVolume;
     private float _currentMusicVolume;
     private float _currentSFXVolume;
-
-
-
-    private bool _wasButtonHeld;
     #endregion
 
 
@@ -100,14 +96,10 @@ public class SettingsMenu : Singleton<SettingsMenu>, IButtonListener
 
     public void ButtonHeld(ButtonInfo heldInfo)
     {
-        _wasButtonHeld = true;
     }
 
     public void ButtonPressed(ButtonInfo pressedInfo)
     {
-        if (!settingsMenu.activeSelf) return;
-
-        _wasButtonHeld = false;
     }
 
     public void ButtonReleased(ButtonInfo releasedInfo)
