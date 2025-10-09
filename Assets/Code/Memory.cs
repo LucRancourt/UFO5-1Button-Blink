@@ -28,6 +28,8 @@ public class Memory : MonoBehaviour, IButtonListener
 
     private SpriteRenderer _spriteRenderer;
 
+    private int _randomOne;
+
 
     // Functions
     private void Awake()
@@ -58,6 +60,8 @@ public class Memory : MonoBehaviour, IButtonListener
 
         gameObject.layer = LayerMask.NameToLayer("Default");
 
+        _randomOne = UnityEngine.Random.Range(0, 1) * 2 - 1;
+
         _isActive = true;
         //StartCoroutine(FadeIn());
     }
@@ -65,6 +69,8 @@ public class Memory : MonoBehaviour, IButtonListener
     private void Update()
     {
         if (!_isActive) return;
+
+        transform.RotateAround(transform.position, transform.forward, _randomOne * Time.deltaTime * 10.0f);
 
         if (_isButtonHeldDown && !Candle.Instance.IsDead)
         {

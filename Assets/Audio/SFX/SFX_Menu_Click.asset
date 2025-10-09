@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 55e4004af6d3aee4c8667a05a4121721, type: 3}
-  m_Name: SFX_Click_Piano_Mi
+  m_Name: SFX_Menu_Click
   m_EditorClassIdentifier: 
-  <Clip>k__BackingField: {fileID: 8300000, guid: 22c3c5a9a3633ec4a82d4e1d16ca795b, type: 3}
+  <Clip>k__BackingField: {fileID: 8300000, guid: bced66a1402ec1e40b25dfdd6a687322, type: 3}
   <Volume>k__BackingField: 0.249
   <Pitch>k__BackingField: 1.16

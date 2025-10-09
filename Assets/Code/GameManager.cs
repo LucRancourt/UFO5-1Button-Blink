@@ -18,6 +18,16 @@ public class GameManager : Singleton<GameManager>
     private bool _timeToFadeIn;
     private float _fadeValue;
 
+
+    private Vector2 _largeCircleCenter = new Vector2(0.0f, -5.02f);
+    private float _largeCircleRadius = 10.0f;
+
+    private Vector2 _smallCircleCenter = new Vector2(1.14f, -4.67f);
+    private float _smallCircleRadius = 4.5f;
+
+
+
+
     // Functions 
     protected override void Awake()
     {
@@ -81,6 +91,25 @@ public class GameManager : Singleton<GameManager>
         else
         {
             int index = Random.Range(0, _memoriesUnseen.Count);
+
+            Vector2 randomPoint;
+            
+            while (true)
+            {
+                randomPoint = _largeCircleCenter + Random.insideUnitCircle * _largeCircleRadius;
+
+                if (randomPoint.y >= -5.0f)
+                {
+                    float distanceToSmallCircleCenterSquared = (randomPoint - _smallCircleCenter).sqrMagnitude;
+
+                    if (distanceToSmallCircleCenterSquared > (_smallCircleRadius * _smallCircleRadius))
+                    {
+                        break;
+                    }
+                }
+            }
+
+            _memoriesUnseen[index].transform.position = new Vector3(randomPoint.x, randomPoint.y, 0.0f);
 
             _memoriesUnseen[index].gameObject.SetActive(true);
             _memoriesUnseen[index].Activate();
