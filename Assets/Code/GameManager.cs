@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class GameManager : Singleton<GameManager>
 {
     // Variables
-    private bool _isGameActive;
+    public bool IsGameActive { get; private set; }
 
     [SerializeField] private Image panel;
     [SerializeField] private float dividerToSlowFade;
@@ -41,7 +41,7 @@ public class GameManager : Singleton<GameManager>
 
     public void StartGame()
     {
-        _isGameActive = true;
+        IsGameActive = true;
         ResetMemoryPool();
 
         _fadeValue = 0.0f;
@@ -56,7 +56,7 @@ public class GameManager : Singleton<GameManager>
     {
         for (int i = 0; i < _memoriesSeen.Count; i++)
         {
-            _memoriesSeen[i].gameObject.SetActive(false);
+            _memoriesSeen[i].TurnOffMemory();
             _memoriesUnseen.Add(_memoriesSeen[i]);
             _memoriesSeen.Remove(_memoriesSeen[i]);
         }
@@ -80,14 +80,14 @@ public class GameManager : Singleton<GameManager>
 
     private void ActiveMemoryDespawned()
     {
-        if (!_isGameActive) return;
+        if (!IsGameActive) return;
 
         StartCoroutine(SpawnMemory());
     }
 
     public void EndGame()
     {
-        _isGameActive = false;
+        IsGameActive = false;
         StopAllCoroutines();
         ResetMemoryPool();
 

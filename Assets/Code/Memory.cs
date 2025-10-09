@@ -9,6 +9,7 @@ public class Memory : MonoBehaviour, IButtonListener
     // Variables
     public event Action OnMemoryFadedOut;
 
+    [SerializeField] private GameObject fullsizeBackground;
     [SerializeField] private GameObject pfx;
     [SerializeField] private float lifetime;
     private float _currentLifetime;
@@ -56,7 +57,8 @@ public class Memory : MonoBehaviour, IButtonListener
 
         gameObject.layer = LayerMask.NameToLayer("Default");
 
-        StartCoroutine(FadeIn());
+        _isActive = true;
+        //StartCoroutine(FadeIn());
     }
 
     private void Update()
@@ -66,14 +68,14 @@ public class Memory : MonoBehaviour, IButtonListener
         if (_isButtonHeldDown)
         {
             _currentExperienceTime = Mathf.Clamp(_currentExperienceTime + Time.deltaTime, 0.0f, timeToExperience);
-            _colorForFade.a = Mathf.Clamp(_colorForFade.a + _timeToRemove, 0.5f, 1.0f);
+            _colorForFade.a = Mathf.Clamp(_colorForFade.a + _timeToRemove, 0.0f, 1.0f);
         }
         else
         {
             if (!_wasExperienced)
             {
                 _currentExperienceTime = Mathf.Clamp(_currentExperienceTime - Time.deltaTime, 0.0f, timeToExperience);
-                _colorForFade.a = Mathf.Clamp(_colorForFade.a - _timeToRemove, 0.5f, 1.0f);
+                _colorForFade.a = Mathf.Clamp(_colorForFade.a - _timeToRemove, 0.0f, 1.0f);
             }
         }
 
@@ -89,11 +91,15 @@ public class Memory : MonoBehaviour, IButtonListener
             GameObject particleInstance = Instantiate(pfx, transform.position, Quaternion.LookRotation(Camera.main.transform.position - transform.position));
 
             Destroy(particleInstance, particleInstance.GetComponent<ParticleSystem>().main.duration);
+
+            Invoke("SetBackgroundFull", particleInstance.GetComponent<ParticleSystem>().main.duration + 3.0f);
         }
 
 
         if (_currentLifetime <= 0.0f)
         {
+            if (_isButtonHeldDown || _wasExperienced) return;
+
             Deactivate();
         }
         else
@@ -102,9 +108,36 @@ public class Memory : MonoBehaviour, IButtonListener
         }
     }
 
+    private void SetBackgroundFull()
+    {
+        if (!GameManager.Instance.IsGameActive)
+        {
+            TurnOffMemory();
+            return;
+        }
+
+        Candle.Instance.AddTime(5.0f);
+
+        fullsizeBackground.gameObject.SetActive(true);
+
+        Invoke("SetBackgroundInactive", 5.0f);
+    }
+
+    private void SetBackgroundInactive()
+    {
+        fullsizeBackground.gameObject.SetActive(false);
+
+        if (!GameManager.Instance.IsGameActive)
+        {
+            TurnOffMemory();
+            return;
+        }
+
+        Deactivate();
+    }
+
     public void Deactivate()
     {
-        _isActive = false;
         StartCoroutine(FadeOut());
     }
 
@@ -120,7 +153,6 @@ public class Memory : MonoBehaviour, IButtonListener
         }
 
         _colorForFade.a = 0.35f;
-        _isActive = true;
     }
 
     private IEnumerator FadeOut()
@@ -137,9 +169,15 @@ public class Memory : MonoBehaviour, IButtonListener
         }
 
         OnMemoryFadedOut?.Invoke();
-        gameObject.SetActive(false);
+        TurnOffMemory();
     }
 
+    public void TurnOffMemory()
+    {
+        fullsizeBackground.gameObject.SetActive(false);
+        _isActive = false;
+        gameObject.SetActive(false);
+    }
 
 
     public void ButtonHeld(ButtonInfo heldInfo)

@@ -202,6 +202,14 @@ public class Candle : Singleton<Candle>, IButtonListener
         Setup();
     }
 
+
+    public void AddTime(float amount)
+    {
+        _currentLifetime += amount;
+    }
+
+
+
     public void ButtonHeld(ButtonInfo heldInfo)
     {
         _currentButton = heldInfo;
