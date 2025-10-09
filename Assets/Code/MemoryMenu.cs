@@ -9,6 +9,7 @@ public class MemoryMenu : Singleton<MemoryMenu>
     [SerializeField] private GameObject memoryMenu;
     [SerializeField] private EventSystem eventSystem;
     [SerializeField] private Button backButton;
+    [SerializeField] private SFX clickSFX;
 
     private Memory[] _memories;
     [Tooltip("Each should have: TitleText, IconSprite")]
@@ -22,6 +23,7 @@ public class MemoryMenu : Singleton<MemoryMenu>
         _memories = FindObjectsByType<Memory>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID);
 
         backButton.onClick.AddListener(CloseMenu);
+        backButton.onClick.AddListener(PlayClickSFX);
     }
 
     public void OpenMenu()
@@ -33,13 +35,13 @@ public class MemoryMenu : Singleton<MemoryMenu>
         {
             if (PlayerPrefs.GetInt(_memories[i].AchievementKey) == 1)
             {
-                memorySections[i].GetComponent<TextMeshProUGUI>().SetText(_memories[i].AchievementKey);
-                memorySections[i].GetComponent<SpriteRenderer>().sprite = _memories[i].GetComponent<SpriteRenderer>().sprite;
+                memorySections[i].GetComponentInChildren<TextMeshProUGUI>().SetText(_memories[i].AchievementKey);
+                memorySections[i].GetComponentInChildren<Identifier>().GetComponent<Image>().sprite = _memories[i].FullsizeBackground.GetComponent<Image>().sprite;
             }
             else
             {
-                memorySections[i].GetComponent<TextMeshProUGUI>().SetText("???");
-                memorySections[i].GetComponent<SpriteRenderer>().sprite = blankMemory;
+                memorySections[i].GetComponentInChildren<TextMeshProUGUI>().SetText("???");
+                memorySections[i].GetComponentInChildren<Identifier>().GetComponent<Image>().sprite = blankMemory;
             }
         }
     }
@@ -48,5 +50,11 @@ public class MemoryMenu : Singleton<MemoryMenu>
     {
         memoryMenu.SetActive(false);
         MainMenu.Instance.ShowMainMenu();
+    }
+
+
+    private void PlayClickSFX()
+    {
+        AudioManager.Instance.PlaySound(clickSFX);
     }
 }

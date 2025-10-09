@@ -7,6 +7,7 @@ public class SettingsMenu : Singleton<SettingsMenu>, IButtonListener
 {
     // Variables
     [SerializeField] private EventSystem eventSystem;
+    [SerializeField] private SFX clickSFX;
 
     [Header("Settings UI")]
     [SerializeField] private GameObject settingsMenu;
@@ -36,6 +37,7 @@ public class SettingsMenu : Singleton<SettingsMenu>, IButtonListener
 
         closeSettingsMenu.onClick.AddListener(CloseMenu);
         closeSettingsMenu.onClick.AddListener(SaveSettings);
+        closeSettingsMenu.onClick.AddListener(PlayClickSFX);
 
         masterVolumeSlider.onValueChanged.AddListener((value) => UpdateVolume(value, AudioMixerKeys.MasterVolumeKey, ref _currentMasterVolume, ref masterVolumeText));
         musicVolumeSlider.onValueChanged.AddListener((value) => UpdateVolume(value, AudioMixerKeys.MusicVolumeKey, ref _currentMusicVolume, ref musicVolumeText));
@@ -118,5 +120,12 @@ public class SettingsMenu : Singleton<SettingsMenu>, IButtonListener
                 slider.value = currentValue;
             }
         }
+    }
+
+
+
+    private void PlayClickSFX()
+    {
+        AudioManager.Instance.PlaySound(clickSFX);
     }
 }

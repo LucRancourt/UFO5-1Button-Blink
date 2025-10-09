@@ -56,7 +56,7 @@ public class MainMenu : Singleton<MainMenu>
 
     private void OpenAchievements()
     {
-        //AchievementsMenu.Instance.OpenMenu();
+        MemoryMenu.Instance.OpenMenu();
     }
 
     private void QuitGame()

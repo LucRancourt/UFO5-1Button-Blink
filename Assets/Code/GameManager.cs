@@ -20,7 +20,7 @@ public class GameManager : Singleton<GameManager>
 
 
     private Vector2 _largeCircleCenter = new Vector2(0.0f, -5.02f);
-    private float _largeCircleRadius = 10.0f;
+    private float _largeCircleRadius = 7.25f;
 
     private Vector2 _smallCircleCenter = new Vector2(1.14f, -4.67f);
     private float _smallCircleRadius = 4.5f;

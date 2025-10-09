@@ -8,12 +8,12 @@ using TMPro;
 public class Memory : MonoBehaviour, IButtonListener
 {
     // Variables
-    public string AchievementKey { get; private set; }
+    public string AchievementKey;
     [SerializeField] private GameObject achievementPopup;
 
     public event Action OnMemoryFadedOut;
 
-    [SerializeField] private GameObject fullsizeBackground;
+    public GameObject FullsizeBackground;
     [SerializeField] private GameObject pfx;
     [SerializeField] private float lifetime;
     private float _currentLifetime;
@@ -129,7 +129,7 @@ public class Memory : MonoBehaviour, IButtonListener
 
         Candle.Instance.AddTime(5.0f);
 
-        fullsizeBackground.gameObject.SetActive(true);
+        FullsizeBackground.gameObject.SetActive(true);
         Invoke("SaveAchievement", 2.5f);
         Invoke("SetBackgroundInactive", 5.0f);
     }
@@ -138,7 +138,6 @@ public class Memory : MonoBehaviour, IButtonListener
     {
         PlayerPrefs.SetInt(AchievementKey, 1);
 
-        achievementPopup.GetComponent<TextMeshProUGUI>().SetText(AchievementKey + " experienced!");
         achievementPopup.SetActive(true);
 
         Invoke("SetPopupInactive", 3.0f);
@@ -151,7 +150,7 @@ public class Memory : MonoBehaviour, IButtonListener
 
     private void SetBackgroundInactive()
     {
-        fullsizeBackground.gameObject.SetActive(false);
+        FullsizeBackground.gameObject.SetActive(false);
 
         if (!GameManager.Instance.IsGameActive || !gameObject.activeSelf)
         {
@@ -165,7 +164,7 @@ public class Memory : MonoBehaviour, IButtonListener
     public void Deactivate()
     {
         _isActive = false;
-        fullsizeBackground.gameObject.SetActive(false);
+        FullsizeBackground.gameObject.SetActive(false);
         StartCoroutine(FadeOut());
     }
 
@@ -206,7 +205,7 @@ public class Memory : MonoBehaviour, IButtonListener
         CancelInvoke();
 
         achievementPopup.SetActive(false);
-        fullsizeBackground.gameObject.SetActive(false);
+        FullsizeBackground.gameObject.SetActive(false);
         _isActive = false;
         gameObject.SetActive(false);
     }
