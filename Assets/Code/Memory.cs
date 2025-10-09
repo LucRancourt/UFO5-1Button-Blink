@@ -51,6 +51,8 @@ public class Memory : MonoBehaviour, IButtonListener
 
         _currentLifetime = lifetime;
 
+        _currentExperienceTime = timeToExperience;
+
         _wasExperienced = false;
         _timeToRemove = 0.025f / timeToExperience;
         _isButtonHeldDown = false;
@@ -127,7 +129,7 @@ public class Memory : MonoBehaviour, IButtonListener
     {
         fullsizeBackground.gameObject.SetActive(false);
 
-        if (!GameManager.Instance.IsGameActive)
+        if (!GameManager.Instance.IsGameActive || !gameObject.activeSelf)
         {
             TurnOffMemory();
             return;
@@ -138,6 +140,7 @@ public class Memory : MonoBehaviour, IButtonListener
 
     public void Deactivate()
     {
+        fullsizeBackground.gameObject.SetActive(false);
         StartCoroutine(FadeOut());
     }
 
