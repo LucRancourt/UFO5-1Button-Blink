@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class MainMenu : Singleton<MainMenu>
@@ -6,6 +7,7 @@ public class MainMenu : Singleton<MainMenu>
     // Variables
     [SerializeField] private SFX clickSFX;
     [SerializeField] private GameObject panel;
+    [SerializeField] private EventSystem eventSystem;
 
     [Header("Buttons")]
     [SerializeField] private Button playButton;
@@ -31,11 +33,14 @@ public class MainMenu : Singleton<MainMenu>
         settingsButton.onClick.AddListener(OpenSettings);
         achievementsButton.onClick.AddListener(OpenAchievements);
         quitButton.onClick.AddListener(QuitGame);
+
+        eventSystem.SetSelectedGameObject(playButton.gameObject);
     }
 
     public void ShowMainMenu()
     {
         panel.SetActive(true);
+        eventSystem.SetSelectedGameObject(playButton.gameObject);
     }
 
     private void StartGame()
@@ -46,7 +51,7 @@ public class MainMenu : Singleton<MainMenu>
 
     private void OpenSettings()
     {
-        //SettingsMenu.Instance.OpenMenu();
+        SettingsMenu.Instance.OpenMenu();
     }
 
     private void OpenAchievements()
