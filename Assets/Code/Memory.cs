@@ -10,6 +10,7 @@ public class Memory : MonoBehaviour, IButtonListener
     // Variables
     public string AchievementKey;
     [SerializeField] private GameObject achievementPopup;
+    [SerializeField] private SFX sfxDing;
 
     public event Action OnMemoryFadedOut;
 
@@ -138,6 +139,7 @@ public class Memory : MonoBehaviour, IButtonListener
     {
         PlayerPrefs.SetInt(AchievementKey, 1);
 
+        AudioManager.Instance.PlaySound(sfxDing);
         achievementPopup.SetActive(true);
 
         Invoke("SetPopupInactive", 3.0f);

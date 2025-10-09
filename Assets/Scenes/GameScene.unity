@@ -1211,9 +1211,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AchievementKey: Sea Breeze
   achievementPopup: {fileID: 855966494}
+  sfxDing: {fileID: 11400000, guid: b1668a5002ab20240a5d61a3abcce71e, type: 2}
   FullsizeBackground: {fileID: 1615096323}
   pfx: {fileID: 6511155442661039913, guid: c6a6a52c34fd78f40b0c6321de4d0739, type: 3}
-  lifetime: 10
+  lifetime: 7
   timeToExperience: 3
   secondsToFade: 0.05
 --- !u!1 &251537411
@@ -1569,10 +1570,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AchievementKey: Beautiful Lights
   achievementPopup: {fileID: 855966494}
+  sfxDing: {fileID: 11400000, guid: b1668a5002ab20240a5d61a3abcce71e, type: 2}
   FullsizeBackground: {fileID: 393859764}
   pfx: {fileID: 6511155442661039913, guid: c6a6a52c34fd78f40b0c6321de4d0739, type: 3}
-  lifetime: 10
-  timeToExperience: 3
+  lifetime: 8
+  timeToExperience: 5
   secondsToFade: 0.05
 --- !u!1 &288019234
 GameObject:
@@ -2446,10 +2448,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AchievementKey: Peaceful Readings
   achievementPopup: {fileID: 855966494}
+  sfxDing: {fileID: 11400000, guid: b1668a5002ab20240a5d61a3abcce71e, type: 2}
   FullsizeBackground: {fileID: 1271685942}
   pfx: {fileID: 6511155442661039913, guid: c6a6a52c34fd78f40b0c6321de4d0739, type: 3}
-  lifetime: 10
-  timeToExperience: 3
+  lifetime: 9
+  timeToExperience: 4
   secondsToFade: 0.05
 --- !u!1 &406161489
 GameObject:
@@ -3740,10 +3743,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AchievementKey: Family Love
   achievementPopup: {fileID: 855966494}
+  sfxDing: {fileID: 11400000, guid: b1668a5002ab20240a5d61a3abcce71e, type: 2}
   FullsizeBackground: {fileID: 1420449311}
   pfx: {fileID: 6511155442661039913, guid: c6a6a52c34fd78f40b0c6321de4d0739, type: 3}
-  lifetime: 10
-  timeToExperience: 3
+  lifetime: 3
+  timeToExperience: 2
   secondsToFade: 0.05
 --- !u!1 &663067699
 GameObject:
@@ -5736,6 +5740,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AchievementKey: Eternal Sleep
   achievementPopup: {fileID: 855966494}
+  sfxDing: {fileID: 11400000, guid: b1668a5002ab20240a5d61a3abcce71e, type: 2}
   FullsizeBackground: {fileID: 1278908058}
   pfx: {fileID: 6511155442661039913, guid: c6a6a52c34fd78f40b0c6321de4d0739, type: 3}
   lifetime: 10
