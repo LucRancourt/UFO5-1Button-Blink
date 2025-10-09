@@ -51,8 +51,7 @@ public class Memory : MonoBehaviour, IButtonListener
 
         _currentLifetime = lifetime;
 
-        _currentExperienceTime = timeToExperience;
-
+        _currentExperienceTime = 0.0f;
         _wasExperienced = false;
         _timeToRemove = 0.025f / timeToExperience;
         _isButtonHeldDown = false;
@@ -67,7 +66,7 @@ public class Memory : MonoBehaviour, IButtonListener
     {
         if (!_isActive) return;
 
-        if (_isButtonHeldDown)
+        if (_isButtonHeldDown && !Candle.Instance.IsDead)
         {
             _currentExperienceTime = Mathf.Clamp(_currentExperienceTime + Time.deltaTime, 0.0f, timeToExperience);
             _colorForFade.a = Mathf.Clamp(_colorForFade.a + _timeToRemove, 0.0f, 1.0f);
@@ -100,7 +99,7 @@ public class Memory : MonoBehaviour, IButtonListener
 
         if (_currentLifetime <= 0.0f)
         {
-            if (_isButtonHeldDown || _wasExperienced) return;
+            if ((_isButtonHeldDown && !Candle.Instance.IsDead) || _wasExperienced) return;
 
             Deactivate();
         }
@@ -140,6 +139,7 @@ public class Memory : MonoBehaviour, IButtonListener
 
     public void Deactivate()
     {
+        _isActive = false;
         fullsizeBackground.gameObject.SetActive(false);
         StartCoroutine(FadeOut());
     }

@@ -42,7 +42,7 @@ public class Candle : Singleton<Candle>, IButtonListener
     public bool IsBurning { get; private set; }
     private bool _wasBurning;
 
-    private bool _isDead = true;
+    public bool IsDead { get; private set; } = true;
 
 
     // Functions
@@ -89,12 +89,12 @@ public class Candle : Singleton<Candle>, IButtonListener
     {
         Setup();
 
-        _isDead = false;
+        IsDead = false;
     }
 
     private void Update()
     {
-        if (_isDead) return;
+        if (IsDead) return;
 
         if (IsBurning && !_wasBurning)
         {
@@ -171,7 +171,7 @@ public class Candle : Singleton<Candle>, IButtonListener
 
     private IEnumerator EndScene()
     {
-        _isDead = true;
+        IsDead = true;
         Vector2 center;
 
         Color color = new Color(0, 0, 0, 0);

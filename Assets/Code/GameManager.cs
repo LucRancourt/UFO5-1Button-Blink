@@ -56,9 +56,14 @@ public class GameManager : Singleton<GameManager>
     {
         for (int i = 0; i < _memoriesSeen.Count; i++)
         {
-            _memoriesSeen[i].TurnOffMemory();
             _memoriesUnseen.Add(_memoriesSeen[i]);
-            _memoriesSeen.Remove(_memoriesSeen[i]);
+        }
+
+        _memoriesSeen.Clear();
+
+        foreach (Memory memory in _memoriesUnseen)
+        {
+            memory.TurnOffMemory();
         }
     }
 
@@ -69,13 +74,20 @@ public class GameManager : Singleton<GameManager>
         if (_memoriesUnseen.Count <= 0)
             ResetMemoryPool();
 
-        int index = Random.Range(0, _memoriesUnseen.Count);
+        if (!IsGameActive)
+        {
+            ResetMemoryPool();
+        }
+        else
+        {
+            int index = Random.Range(0, _memoriesUnseen.Count);
 
-        _memoriesUnseen[index].gameObject.SetActive(true);
-        _memoriesUnseen[index].Activate();
+            _memoriesUnseen[index].gameObject.SetActive(true);
+            _memoriesUnseen[index].Activate();
 
-        _memoriesSeen.Add(_memoriesUnseen[index]);
-        _memoriesUnseen.RemoveAt(index);
+            _memoriesSeen.Add(_memoriesUnseen[index]);
+            _memoriesUnseen.RemoveAt(index);
+        }
     }
 
     private void ActiveMemoryDespawned()
