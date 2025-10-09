@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -6,6 +7,8 @@ using UnityEngine;
 public class Memory : MonoBehaviour, IButtonListener
 {
     // Variables
+    public event Action OnMemoryFadedOut;
+
     [SerializeField] private GameObject pfx;
     [SerializeField] private float lifetime;
     private float _currentLifetime;
@@ -51,6 +54,8 @@ public class Memory : MonoBehaviour, IButtonListener
         _timeToRemove = 0.025f / timeToExperience;
         _isButtonHeldDown = false;
 
+        gameObject.layer = LayerMask.NameToLayer("Default");
+
         StartCoroutine(FadeIn());
     }
 
@@ -65,8 +70,11 @@ public class Memory : MonoBehaviour, IButtonListener
         }
         else
         {
-            _currentExperienceTime = Mathf.Clamp(_currentExperienceTime - Time.deltaTime, 0.0f, timeToExperience);
-            _colorForFade.a = Mathf.Clamp(_colorForFade.a - _timeToRemove, 0.5f, 1.0f);
+            if (!_wasExperienced)
+            {
+                _currentExperienceTime = Mathf.Clamp(_currentExperienceTime - Time.deltaTime, 0.0f, timeToExperience);
+                _colorForFade.a = Mathf.Clamp(_colorForFade.a - _timeToRemove, 0.5f, 1.0f);
+            }
         }
 
         _spriteRenderer.color = _colorForFade;
@@ -75,6 +83,8 @@ public class Memory : MonoBehaviour, IButtonListener
         if (_currentExperienceTime >= timeToExperience && !_wasExperienced)
         {
             _wasExperienced = true;
+
+            gameObject.layer = LayerMask.NameToLayer("UnVignetted");
 
             GameObject particleInstance = Instantiate(pfx, transform.position, Quaternion.LookRotation(Camera.main.transform.position - transform.position));
 
@@ -102,14 +112,14 @@ public class Memory : MonoBehaviour, IButtonListener
     {
         _colorForFade = _spriteRenderer.color;
 
-        while (_spriteRenderer.color.a < 0.5f)
+        while (_spriteRenderer.color.a < 0.35f)
         {
             _colorForFade.a += 0.1f;
             _spriteRenderer.color = _colorForFade;
             yield return _secondsToFade;
         }
 
-        _colorForFade.a = 0.5f;
+        _colorForFade.a = 0.35f;
         _isActive = true;
     }
 
@@ -126,6 +136,7 @@ public class Memory : MonoBehaviour, IButtonListener
             yield return _secondsToFade;
         }
 
+        OnMemoryFadedOut?.Invoke();
         gameObject.SetActive(false);
     }
 

@@ -24,7 +24,7 @@ public class Candle : Singleton<Candle>, IButtonListener
 
     [Header("Vignette")]
     [SerializeField] private Volume globalVolume;
-    [SerializeField] private float vignetteLowLightIntensity = 0.57f;
+    [SerializeField] private float vignetteLowLightIntensity = 0.8f; // 0.57f was original
     [SerializeField] private float vignetteBurnIntensity = 0.43f;
     private Vignette _vignette;
 
