@@ -8,7 +8,7 @@ using TMPro;
 public class Memory : MonoBehaviour, IButtonListener
 {
     // Variables
-    [SerializeField] private string achievementKey;
+    public string AchievementKey { get; private set; }
     [SerializeField] private GameObject achievementPopup;
 
     public event Action OnMemoryFadedOut;
@@ -136,9 +136,9 @@ public class Memory : MonoBehaviour, IButtonListener
 
     private void SaveAchievement()
     {
-        PlayerPrefs.SetInt(achievementKey, 1);
+        PlayerPrefs.SetInt(AchievementKey, 1);
 
-        achievementPopup.GetComponent<TextMeshProUGUI>().SetText(achievementKey + " experienced!");
+        achievementPopup.GetComponent<TextMeshProUGUI>().SetText(AchievementKey + " experienced!");
         achievementPopup.SetActive(true);
 
         Invoke("SetPopupInactive", 3.0f);
