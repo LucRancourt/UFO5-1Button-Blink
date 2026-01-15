@@ -34,7 +34,7 @@ public class MainMenu : Singleton<MainMenu>
         achievementsButton.onClick.AddListener(OpenAchievements);
         quitButton.onClick.AddListener(QuitGame);
 
-        eventSystem.SetSelectedGameObject(playButton.gameObject);
+        //eventSystem.SetSelectedGameObject(playButton.gameObject);
     }
 
     public void ShowMainMenu()

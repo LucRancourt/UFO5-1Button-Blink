@@ -1,13 +1,12 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-/// <summary>
-/// Just an example of a player input class for collecting button info. Place this on an object in your scene, then subscribe to it in order
-/// </summary>
+
+
 public class PlayerInputs : MonoBehaviour
 {
+    // Variables
     private GameInputs _gameInputs;
     private ButtonInfo _currentButton;
     private UnityEvent<ButtonInfo> _buttonHeld;
@@ -15,12 +14,14 @@ public class PlayerInputs : MonoBehaviour
     private UnityEvent<ButtonInfo> _buttonPressed;
     public List<ButtonInfo> _buttonInputs = new List<ButtonInfo>();
 
+
+    // Functions
     public void Awake()
     {
         _buttonHeld = new UnityEvent<ButtonInfo>();
         _buttonReleased = new UnityEvent<ButtonInfo>();
         _buttonPressed = new UnityEvent<ButtonInfo>();
-        
+
     }
     public void OnEnable()
     {
@@ -30,11 +31,11 @@ public class PlayerInputs : MonoBehaviour
             _gameInputs.PlayerControl.Interact.performed += (val) =>
             {
                 _currentButton = new ButtonInfo()
-                    { ButtonID = _buttonInputs.Count, TimeStarted = Time.time, CurrentTime = Time.time, CurrentState= ButtonState.Pressed};
+                { ButtonID = _buttonInputs.Count, TimeStarted = Time.time, CurrentTime = Time.time, CurrentState = ButtonState.Pressed };
                 _buttonInputs.Add(_currentButton);
                 _buttonPressed.Invoke(new ButtonInfo());
                 StartCoroutine(ButtonHeld());
-                
+
             };
             _gameInputs.PlayerControl.Interact.canceled += (val) =>
             {
@@ -44,7 +45,7 @@ public class PlayerInputs : MonoBehaviour
                 _currentButton.CurrentState = ButtonState.Released;
                 _buttonReleased.Invoke(_currentButton);
             };
-            
+
         }
         _gameInputs.PlayerControl.Enable();
     }
@@ -66,6 +67,7 @@ public class PlayerInputs : MonoBehaviour
         _buttonHeld.RemoveListener(buttonListener.ButtonHeld);
         _buttonReleased.RemoveListener(buttonListener.ButtonReleased);
     }
+
     IEnumerator ButtonHeld()
     {
         while (true && _gameInputs != null)
@@ -75,18 +77,6 @@ public class PlayerInputs : MonoBehaviour
             _buttonHeld.Invoke(_currentButton);
             yield return null;
         }
-        
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
-
